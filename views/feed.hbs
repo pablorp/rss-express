@@ -1,0 +1,11 @@
+<ul>
+  {{#each items}}
+    <li>
+        <div>
+            <a href="{{this.link}}"> {{this.title}}</a>
+            <a href="/txt/{{this.decodedLink}}">(text)</a>
+        </div>
+        <div>{{this.dateFormat}}</div>
+    </li>
+  {{/each}}
+</ul>
