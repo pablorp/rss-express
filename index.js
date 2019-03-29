@@ -91,17 +91,24 @@ app.post('/add', (req, res) => {
     if (f.id > id) id = f.id
   })
   
-  
-  _feeds.push({
+  let nuevoFeed = {
     id: id + 1,
     name: name,
     url: url,
     items: []
+  }
+  
+  
+  _feeds.push(nuevoFeed)
+  
+  console.log('feed añadido: ' + nuevoFeed)
+  _feeds.forEach(f => {
+    console.log(f.name)
   })
   
   actualizarFeeds()
   
-  res.send('ok')
+  res.json(_feeds)
 });
 
 
