@@ -19,29 +19,10 @@ app.use(express.urlencoded())
 
 
 
-let feeds = [
-    {id: 1, name: 'Verge', url: 'https://theverge.com/rss/index.xml', items: []},    
-    {id: 2, name: 'Polygon', url: 'https://polygon.com/rss/index.xml', items: []},
-    {id: 3, name: 'Eurogamer', url: 'http://www.eurogamer.net/?format=rss', items: []},
-    {id: 4, name: 'Anait', url: 'http://www.anaitgames.com/feed/', items: []},
-    {id: 5, name: 'Genbeta', url: 'http://feeds.weblogssl.com/genbeta', items: []},
-    {id: 6, name: 'Zona Negativa', url: 'http://www.zonanegativa.com/?feed=rss', items: []},
-    {id: 7, name: 'Fantifica', url: 'http://www.fantifica.com/feed', items: []},
-    {id: 8, name: 'Fancueva', url: 'http://feeds.feedburner.com/fancueva', items: []},
-    {id: 9, name: 'Espinof', url: 'http://www.vayatele.com/index.xml', items: []},
-    {id: 10, name: 'Papel en Blanco', url: 'http://feeds.feedburner.com/PapelEnBlanco2', items: []},
-]
-
-
-
-
-
-
-
-
+let _feeds = []
 
 app.get('/f/:id', (req, res) => {
-  let feed = feeds.find(i => i.id == req.params.id)
+  let feed = _feeds.find(i => i.id == req.params.id)
   
   res.render('feed', {
       items: feed.items
@@ -52,7 +33,7 @@ app.get('/f/:id', (req, res) => {
 
 app.get('/', (req, res) => {
   res.render('index', {
-      feeds: feeds
+      feeds: _feeds
   });
 });
 
@@ -80,7 +61,7 @@ app.get('/txt/:link', (req, res) => {
 
 
 app.get('/reset', (req, res) => {
-  store.del('feeds')
+  store.set('feeds', [])
   res.send('ok')
 });
 
@@ -88,7 +69,7 @@ app.get('/reset', (req, res) => {
 
 
 app.get('/data', (req, res) => {
-  res.json(store.get('feeds'))
+  res.json(_feeds)
 });
 
 
@@ -101,17 +82,22 @@ app.get('/add', (req, res) => {
 
 
 app.post('/add', (req, res) => {
-  const name = req.body.name
-  const url = req.body.url
+  let name = req.body.name
+  let url = req.body.url
   
-  feeds.push({
-    id: feeds.length + 1,
+  let id = 1;
+  
+  _feeds.forEach(f => {
+    if (f.id > id) id = f.id
+  })
+  
+  
+  _feeds.push({
+    id: id + 1,
     name: name,
     url: url,
     items: []
   })
-  
-  store.set('feeds', feeds)
   
   actualizarFeeds()
   
@@ -122,33 +108,24 @@ app.post('/add', (req, res) => {
 
 
 app.get('/del/:id', (req, res) => {
-  let index = feeds.findIndex(i => i.id == req.params.id)
-  feeds.splice(index, 1)
-  store.set('feeds', feeds)
+  let index = _feeds.findIndex(i => i.id == req.params.id)
+  _feeds.splice(index, 1)
   res.send('ok')
 });
 
 
 //-------------------------------------------------------------
 
-if (!store.has('feeds')) {
-    store.set('feeds', feeds)
+if (!getFeeds()) {
+    guardarFeeds([])
 } else {
-    let feedsTmp = store.get('feeds')
-    feeds.forEach(f => {
-      if (feedsTmp.filter(x => x.id == f.id).length == 0) {
-        feedsTmp.push(f)
-      }
-    })
-    store.set('feeds', feedsTmp)
-    feeds = store.get('feeds')
+    _feeds = _feeds.concat(getFeeds())
 }
 
 
 
 function actualizarFeeds() {
-  feeds.forEach(feed => {
-        
+  _feeds.forEach(feed => {
         parser.parseURL(feed.url, (err, respFeed) => {
           if (err) {
             console.log(err)
@@ -176,22 +153,25 @@ function actualizarFeeds() {
             if (feed.items.length > 500) {
               feed.items = feed.items.slice(0, 500)
             }
-            
-            store.set('feeds', feeds)
-            
           }
         })
-        
     })
 }
 
+function getFeeds() {
+  return store.get('feeds')
+}
 
+function guardarFeeds(feedsTmp) {
+  store.set('feeds', feedsTmp)
+}
 
 actualizarFeeds()
 
 setInterval(() => {
   console.log('Actualizando feeds')
   actualizarFeeds()
+  guardarFeeds(_feeds)
 }, 5 * 60 * 1000)
 
 
