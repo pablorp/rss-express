@@ -119,6 +119,16 @@ app.post('/add', (req, res) => {
 });
 
 
+
+
+app.get('/del/:id', (req, res) => {
+  let index = feeds.findIndex(i => i.id == req.params.id)
+  feeds.splice(index, 1)
+  store.set('feeds', feeds)
+  res.send('ok')
+});
+
+
 //-------------------------------------------------------------
 
 if (!store.has('feeds')) {
