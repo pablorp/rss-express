@@ -16,6 +16,7 @@ app.engine('.hbs', exphbs({defaultLayout: 'main', extname: '.hbs'}));
 app.set('view engine', '.hbs');
 
 app.use(express.urlencoded())
+app.use(express.bodyParser());
 
 
 
@@ -119,6 +120,12 @@ app.get('/del/:id', (req, res) => {
   _feeds.splice(index, 1)
   res.send('ok')
 });
+
+
+app.post('/restore', (req, res) => {
+  _feeds = req.body
+  res.json(_feeds)
+})
 
 
 //-------------------------------------------------------------
