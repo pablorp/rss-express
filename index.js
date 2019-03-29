@@ -15,6 +15,8 @@ app.engine('.hbs', exphbs({defaultLayout: 'main', extname: '.hbs'}));
 // Use Handlebars view engine
 app.set('view engine', '.hbs');
 
+app.use(express.urlencoded())
+
 
 
 let feeds = [
@@ -83,6 +85,40 @@ app.get('/reset', (req, res) => {
 });
 
 
+
+
+app.get('/data', (req, res) => {
+  res.json(store.get('feeds'))
+});
+
+
+
+app.get('/add', (req, res) => {
+  res.render('add')
+});
+
+
+
+
+app.post('/add', (req, res) => {
+  const name = req.body.name
+  const url = req.body.url
+  
+  feeds.push({
+    id: feeds.length + 1,
+    name: name,
+    url: url,
+    items: []
+  })
+  
+  store.set('feeds', feeds)
+  
+  actualizarFeeds()
+  
+  res.send('ok')
+});
+
+
 //-------------------------------------------------------------
 
 if (!store.has('feeds')) {
@@ -126,6 +162,10 @@ function actualizarFeeds() {
             })
             
             feed.items.sort((a, b) => b.date - a.date)
+            
+            if (feed.items.length > 500) {
+              feed.items = feed.items.slice(0, 500)
+            }
             
             store.set('feeds', feeds)
             
