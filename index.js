@@ -139,6 +139,7 @@ if (!getFeeds()) {
 
 
 function actualizarFeeds() {
+  console.log('Actualizando feeds')
   _feeds.forEach(feed => {
         parser.parseURL(feed.url, (err, respFeed) => {
           if (err) {
@@ -183,7 +184,6 @@ function guardarFeeds(feedsTmp) {
 actualizarFeeds()
 
 setInterval(() => {
-  console.log('Actualizando feeds')
   actualizarFeeds()
   guardarFeeds(_feeds)
 }, 5 * 60 * 1000)

@@ -1,11 +1,9 @@
-<ul>
-  {{#each items}}
-    <li>
-        <div>
-            <a href="{{this.link}}"> {{this.title}}</a>
-            <a href="/txt/{{this.decodedLink}}">(text)</a>
-        </div>
-        <div>{{this.dateFormat}}</div>
-    </li>
-  {{/each}}
-</ul>
+{{#each items}}
+  <div class="item">
+      <div class="item-date">{{this.dateFormat}}</div>
+      <div>
+          <a class="item-title" href="{{this.link}}">{{this.title}}</a>
+          <a class="item-text" href="/txt/{{this.decodedLink}}">text</a>
+      </div>
+  </div>
+{{/each}}
