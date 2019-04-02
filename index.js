@@ -26,17 +26,63 @@ app.get('/f/:id', (req, res) => {
   let feed = _feeds.find(i => i.id == req.params.id)
   
   res.render('feed', {
-      items: feed.items
+      items: feed.items,
+      id: req.params.id
   });
 });
+
+
+
+
+app.get('/f/:id/read', (req, res) => {
+  let feed = _feeds.find(i => i.id == req.params.id)
+  
+  feed.items.forEach(i => {
+    i.read = true
+  })
+  
+  res.redirect('/')
+});
+
 
 
 
 app.get('/', (req, res) => {
+  _feeds.forEach(f => {
+    let n = 0
+    f.items.forEach(i => {
+      if (!i.read) n++
+    })
+    f.new = n
+  })
+  
   res.render('index', {
       feeds: _feeds
   });
 });
+
+
+
+
+app.get('/upgrade', (req, res) => {
+
+  _feeds.forEach(f => {
+    f.items.forEach(i => {
+      i.read = false
+    })
+  })
+  
+  
+  res.redirect('/')
+});
+
+
+
+app.get('/persist', (req, res) => {
+  guardarFeeds(_feeds)
+  res.redirect('/')
+});
+
 
 
 
@@ -151,7 +197,8 @@ function actualizarFeeds() {
                   title: x.title,
                   date: Date.parse(x.isoDate),
                   dateFormat: moment(x.isoDate).format('D-M-YYYY, HH:mm:ss'),
-                  decodedLink: encodeURIComponent(x.link)  
+                  decodedLink: encodeURIComponent(x.link),
+                  read: false
               }
             })
             

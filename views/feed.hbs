@@ -1,7 +1,12 @@
+<div style="margin-bottom: 20px;">
+    <a href="/f/{{id}}/read">Mark read</a>
+</div>
+
 {{#each items}}
   <div class="item">
       <div class="item-date">{{this.dateFormat}}</div>
       <div>
+          {{#if this.read}} - {{else}} + {{/if}}
           <a class="item-title" href="{{this.link}}">{{this.title}}</a>
           <a class="item-text" href="/txt/{{this.decodedLink}}">text</a>
       </div>
