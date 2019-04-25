@@ -39,7 +39,7 @@ app.get('/f/:id/read', (req, res) => {
     i.read = true
   })
 
-  res.redirect('/')
+  res.redirect('/rss')
 });
 
 
