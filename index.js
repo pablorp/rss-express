@@ -10,9 +10,7 @@ const store = new Store({ path: 'store.json' });
 
 
 
-// Register Handlebars view engine
-app.engine('.hbs', exphbs({defaultLayout: 'main', extname: '.hbs'}));
-// Use Handlebars view engine
+app.engine('.hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
 app.set('view engine', '.hbs');
 
 app.use(express.urlencoded())
@@ -24,10 +22,10 @@ let _feeds = []
 
 app.get('/f/:id', (req, res) => {
   let feed = _feeds.find(i => i.id == req.params.id)
-  
+
   res.render('feed', {
-      items: feed.items,
-      id: req.params.id
+    items: feed.items,
+    id: req.params.id
   });
 });
 
@@ -36,18 +34,18 @@ app.get('/f/:id', (req, res) => {
 
 app.get('/f/:id/read', (req, res) => {
   let feed = _feeds.find(i => i.id == req.params.id)
-  
+
   feed.items.forEach(i => {
     i.read = true
   })
-  
+
   res.redirect('/')
 });
 
 
 
 
-app.get('/', (req, res) => {
+app.get('/rss', (req, res) => {
   _feeds.forEach(f => {
     let n = 0
     f.items.forEach(i => {
@@ -55,9 +53,9 @@ app.get('/', (req, res) => {
     })
     f.new = n
   })
-  
+
   res.render('index', {
-      feeds: _feeds
+    feeds: _feeds
   });
 });
 
@@ -71,16 +69,16 @@ app.get('/upgrade', (req, res) => {
       i.read = false
     })
   })
-  
-  
-  res.redirect('/')
+
+
+  res.redirect('/rss')
 });
 
 
 
 app.get('/persist', (req, res) => {
   guardarFeeds(_feeds)
-  res.redirect('/')
+  res.redirect('/rss')
 });
 
 
@@ -88,16 +86,16 @@ app.get('/persist', (req, res) => {
 
 
 app.get('/txt/:link', (req, res) => {
-  
+
   let link = decodeURIComponent(req.params.link)
-  
+
   read(link, (err, article) => {
     if (err) {
       console.log(err)
     } else {
       res.render('text', {
-          title: article.title,
-          text: article.content
+        title: article.title,
+        text: article.content
       });
     }
   })
@@ -131,30 +129,30 @@ app.get('/add', (req, res) => {
 app.post('/add', (req, res) => {
   let name = req.body.name
   let url = req.body.url
-  
+
   let id = 1;
-  
+
   _feeds.forEach(f => {
     if (f.id > id) id = f.id
   })
-  
+
   let nuevoFeed = {
     id: id + 1,
     name: name,
     url: url,
     items: []
   }
-  
-  
+
+
   _feeds.push(nuevoFeed)
-  
+
   console.log('feed añadido: ' + nuevoFeed)
   _feeds.forEach(f => {
     console.log(f.name)
   })
-  
+
   actualizarFeeds()
-  
+
   res.json(_feeds)
 });
 
@@ -177,9 +175,9 @@ app.post('/restore', (req, res) => {
 //-------------------------------------------------------------
 
 if (!getFeeds()) {
-    guardarFeeds([])
+  guardarFeeds([])
 } else {
-    _feeds = _feeds.concat(getFeeds())
+  _feeds = _feeds.concat(getFeeds())
 }
 
 
@@ -187,37 +185,37 @@ if (!getFeeds()) {
 function actualizarFeeds() {
   console.log('Actualizando feeds')
   _feeds.forEach(feed => {
-        parser.parseURL(feed.url, (err, respFeed) => {
-          if (err) {
-            console.log(err)
-          } else {
-            let items = respFeed.items.map(x => {
-              return { 
-                  link: x.link,
-                  title: x.title,
-                  date: Date.parse(x.isoDate),
-                  dateFormat: moment(x.isoDate).format('D-M-YYYY, HH:mm:ss'),
-                  decodedLink: encodeURIComponent(x.link),
-                  read: false
-              }
-            })
-            
-            items.forEach(item => {
-                
-                if (feed.items.length == 0 || feed.items.filter(x => x.title == item.title).length == 0) {
-                    feed.items.push(item)
-                }
-                
-            })
-            
-            feed.items.sort((a, b) => b.date - a.date)
-            
-            if (feed.items.length > 500) {
-              feed.items = feed.items.slice(0, 500)
-            }
+    parser.parseURL(feed.url, (err, respFeed) => {
+      if (err) {
+        console.log(err)
+      } else {
+        let items = respFeed.items.map(x => {
+          return {
+            link: x.link,
+            title: x.title,
+            date: Date.parse(x.isoDate),
+            dateFormat: moment(x.isoDate).format('D-M-YYYY, HH:mm:ss'),
+            decodedLink: encodeURIComponent(x.link),
+            read: false
           }
         })
+
+        items.forEach(item => {
+
+          if (feed.items.length == 0 || feed.items.filter(x => x.title == item.title).length == 0) {
+            feed.items.push(item)
+          }
+
+        })
+
+        feed.items.sort((a, b) => b.date - a.date)
+
+        if (feed.items.length > 500) {
+          feed.items = feed.items.slice(0, 500)
+        }
+      }
     })
+  })
 }
 
 function getFeeds() {
@@ -236,6 +234,6 @@ setInterval(() => {
 }, 5 * 60 * 1000)
 
 
-app.listen(process.env.PORT, () => {
-  console.log('app is running → PORT ' + process.env.PORT);
+app.listen(3001, () => {
+  console.log('app is running → PORT 3001');
 });
