@@ -7,45 +7,22 @@ const read = require('node-readability');
 const moment = require('moment');
 const Store = require('data-store');
 const store = new Store({ path: 'store.json' });
-
-
+const router = express.Router();
 
 app.engine('.hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
 app.set('view engine', '.hbs');
 
 app.use(express.urlencoded())
 app.use(express.json());
+app.set('base', '/rss');
 
+const PORT = 5001
 
+//--------------------------------------------------------
 
 let _feeds = []
 
-app.get('/f/:id', (req, res) => {
-  let feed = _feeds.find(i => i.id == req.params.id)
-
-  res.render('feed', {
-    items: feed.items,
-    id: req.params.id
-  });
-});
-
-
-
-
-app.get('/f/:id/read', (req, res) => {
-  let feed = _feeds.find(i => i.id == req.params.id)
-
-  feed.items.forEach(i => {
-    i.read = true
-  })
-
-  res.redirect('/rss')
-});
-
-
-
-
-app.get('/rss', (req, res) => {
+router.get('/', (req, res) => {
   _feeds.forEach(f => {
     let n = 0
     f.items.forEach(i => {
@@ -60,9 +37,28 @@ app.get('/rss', (req, res) => {
 });
 
 
+router.get('/f/:id', (req, res) => {
+  let feed = _feeds.find(i => i.id == req.params.id)
+
+  res.render('feed', {
+    items: feed.items,
+    id: req.params.id
+  });
+});
 
 
-app.get('/upgrade', (req, res) => {
+router.get('/f/:id/read', (req, res) => {
+  let feed = _feeds.find(i => i.id == req.params.id)
+
+  feed.items.forEach(i => {
+    i.read = true
+  })
+
+  res.redirect('/')
+});
+
+
+router.get('/upgrade', (req, res) => {
 
   _feeds.forEach(f => {
     f.items.forEach(i => {
@@ -71,21 +67,17 @@ app.get('/upgrade', (req, res) => {
   })
 
 
-  res.redirect('/rss')
+  res.redirect('/')
 });
 
 
-
-app.get('/persist', (req, res) => {
+router.get('/persist', (req, res) => {
   guardarFeeds(_feeds)
-  res.redirect('/rss')
+  res.redirect('/')
 });
 
 
-
-
-
-app.get('/txt/:link', (req, res) => {
+router.get('/txt/:link', (req, res) => {
 
   let link = decodeURIComponent(req.params.link)
 
@@ -103,30 +95,23 @@ app.get('/txt/:link', (req, res) => {
 });
 
 
-
-
-app.get('/reset', (req, res) => {
+router.get('/reset', (req, res) => {
   store.set('feeds', [])
   res.send('ok')
 });
 
 
-
-
-app.get('/data', (req, res) => {
+router.get('/data', (req, res) => {
   res.json(_feeds)
 });
 
 
-
-app.get('/add', (req, res) => {
+router.get('/add', (req, res) => {
   res.render('add')
 });
 
 
-
-
-app.post('/add', (req, res) => {
+router.post('/add', (req, res) => {
   let name = req.body.name
   let url = req.body.url
 
@@ -143,7 +128,6 @@ app.post('/add', (req, res) => {
     items: []
   }
 
-
   _feeds.push(nuevoFeed)
 
   console.log('feed añadido: ' + nuevoFeed)
@@ -157,20 +141,19 @@ app.post('/add', (req, res) => {
 });
 
 
-
-
-app.get('/del/:id', (req, res) => {
+router.get('/del/:id', (req, res) => {
   let index = _feeds.findIndex(i => i.id == req.params.id)
   _feeds.splice(index, 1)
   res.send('ok')
 });
 
 
-app.post('/restore', (req, res) => {
+router.post('/restore', (req, res) => {
   _feeds = req.body
   res.json(_feeds)
 })
 
+app.use('/rss', router);
 
 //-------------------------------------------------------------
 
@@ -179,8 +162,6 @@ if (!getFeeds()) {
 } else {
   _feeds = _feeds.concat(getFeeds())
 }
-
-
 
 function actualizarFeeds() {
   console.log('Actualizando feeds')
@@ -234,6 +215,6 @@ setInterval(() => {
 }, 5 * 60 * 1000)
 
 
-app.listen(3001, () => {
-  console.log('app is running → PORT 3001');
+app.listen(PORT, () => {
+  console.log('app is running → PORT ' + PORT);
 });
