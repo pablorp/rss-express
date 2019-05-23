@@ -51,8 +51,6 @@ router.get('/', async (req, res) => {
 router.get('/f/:id', async (req, res) => {
   let feed = await getFeed(req.params.id)
 
-  console.log(feed)
-
   res.render('feed', {
     items: feed.items,
     id: req.params.id
