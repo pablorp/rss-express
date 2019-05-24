@@ -6,7 +6,6 @@ const parser = new Parser()
 const moment = require('moment')
 const router = express.Router()
 const mongo = require('mongodb').MongoClient
-const request = require('request')
 const { extract } = require('article-parser')
 
 require('dotenv').config()
