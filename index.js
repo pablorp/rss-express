@@ -25,7 +25,7 @@ app.set('view engine', '.hbs')
 
 app.use(express.urlencoded())
 app.use(express.json())
-app.set('base', '/rss')
+app.set('base', '/')
 
 //--------------------------------------------------------
 
@@ -63,7 +63,7 @@ router.get('/f/:id/read', async (req, res) => {
 
     await guardarFeed(feed)
 
-    res.redirect('/rss')
+    res.redirect('/')
 })
 
 router.get('/txt/:link', (req, res) => {
@@ -109,7 +109,7 @@ router.post('/add', async (req, res) => {
 
     actualizarFeeds()
 
-    res.redirect('/rss')
+    res.redirect('/')
 })
 
 router.get('/del/:id', async (req, res) => {
@@ -212,7 +212,7 @@ async function main() {
             actualizarFeeds()
         }, 5 * 60 * 1000)
 
-        app.use('/rss', router)
+        app.use('/', router)
 
         app.listen(process.env.PORT, () => {
             console.log('app is running → PORT ' + process.env.PORT)
