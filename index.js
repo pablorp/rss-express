@@ -206,12 +206,6 @@ async function main() {
 
         console.log('conectado')
 
-        actualizarFeeds()
-
-        setInterval(() => {
-            actualizarFeeds()
-        }, 5 * 60 * 1000)
-
         app.use('/', router)
 
         app.listen(process.env.PORT, () => {
