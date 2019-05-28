@@ -32,6 +32,10 @@ app.set('base', '/')
 router.get('/', async (req, res) => {
     let feeds = await getFeeds()
 
+    feeds.sort((a, b) => {
+        return a.id - b.id
+    })
+
     feeds.forEach(f => {
         let n = 0
         f.items.forEach(i => {
