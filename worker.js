@@ -56,8 +56,8 @@ async function actualizarFeeds() {
 async function main() {
     try {
         client = await mongo.connect(process.env.DATABASE_URL)
-        db = client.db('dbtest1')
-        col = db.collection('rss')
+        db = client.db('rss')
+        col = db.collection('feeds')
 
         console.log('conectado')
 
