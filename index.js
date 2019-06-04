@@ -25,7 +25,7 @@ app.set('view engine', '.hbs')
 
 app.use(express.urlencoded())
 app.use(express.json())
-app.set('base', '/')
+app.set('base', process.env.URL_BASE)
 
 //--------------------------------------------------------
 
@@ -45,7 +45,8 @@ router.get('/', async (req, res) => {
     })
 
     res.render('index', {
-        feeds: feeds
+        feeds: feeds,
+        url_base: process.env.URL_BASE
     })
 })
 
@@ -54,7 +55,8 @@ router.get('/f/:id', async (req, res) => {
 
     res.render('feed', {
         items: feed.items,
-        id: req.params.id
+        id: req.params.id,
+        url_base: process.env.URL_BASE
     })
 })
 
@@ -67,7 +69,7 @@ router.get('/f/:id/read', async (req, res) => {
 
     await guardarFeed(feed)
 
-    res.redirect('/')
+    res.redirect(process.env.URL_BASE)
 })
 
 router.get('/txt/:link', (req, res) => {
@@ -78,7 +80,8 @@ router.get('/txt/:link', (req, res) => {
             console.log(article)
             res.render('text', {
                 title: article.title,
-                text: article.content
+                text: article.content,
+                url_base: process.env.URL_BASE
             })
         })
         .catch(err => {
@@ -87,7 +90,9 @@ router.get('/txt/:link', (req, res) => {
 })
 
 router.get('/add', (req, res) => {
-    res.render('add')
+    res.render('add', {
+        url_base: process.env.URL_BASE
+    })
 })
 
 router.post('/add', async (req, res) => {
@@ -113,7 +118,7 @@ router.post('/add', async (req, res) => {
 
     actualizarFeeds()
 
-    res.redirect('/')
+    res.redirect(process.env.URL_BASE)
 })
 
 router.get('/del/:id', async (req, res) => {
@@ -210,7 +215,7 @@ async function main() {
 
         console.log('conectado')
 
-        app.use('/', router)
+        app.use(process.env.URL_BASE, router)
 
         app.listen(process.env.PORT, () => {
             console.log('app is running → PORT ' + process.env.PORT)

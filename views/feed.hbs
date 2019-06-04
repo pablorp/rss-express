@@ -1,5 +1,5 @@
 <div style="margin-bottom: 20px;">
-    <a href="/f/{{id}}/read">Mark read</a>
+    <a href="{{url_base}}/f/{{id}}/read">Mark read</a>
 </div>
 
 {{#each items}}
@@ -8,7 +8,7 @@
       <div>
           {{#if this.read}} - {{else}} + {{/if}}
           <a class="item-title" href="{{this.link}}">{{this.title}}</a>
-          <a class="item-text" href="/txt/{{this.decodedLink}}">text</a>
+          <a class="item-text" href="{{../url_base}}/txt/{{this.decodedLink}}">text</a>
       </div>
   </div>
 {{/each}}

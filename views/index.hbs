@@ -1,7 +1,7 @@
 <ul>
   {{#each feeds}}
     <li>
-        <a href="/f/{{this.id}}">{{this.name}} ({{this.new}})</a>
+        <a href="{{../url_base}}/f/{{this.id}}">{{this.name}} ({{this.new}})</a>
     </li>
   {{/each}}
 </ul>
