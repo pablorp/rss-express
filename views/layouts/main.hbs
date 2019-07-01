@@ -1,53 +1,54 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css">
+    <link rel="stylesheet" href="https://unpkg.com/bulmaswatch/solar/bulmaswatch.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <title>RSS Express 1.01.001</title>
-    
+
     <style>
-        .item {
-            margin-bottom: 30px;
+        .feed {
+            cursor: pointer;
         }
-        
-        .item-date {
-            opacity: 0.7;
-            font-size: 0.8em;
-            margin-bottom: 5px;
+
+        .feed:hover {
+            filter: brightness(1.20);
         }
-        
-        .item-title {
-            text-decoration: none;
+
+        .feed-item {
+            cursor: pointer;
         }
-        
-        .item-text {
-            opacity: 0.7;
-            font-size: 0.8em;
-            text-decoration: none;
+
+        .feed-item:hover {
+            filter: brightness(1.10);
         }
-        
-        .item-read {
-            font-style: italic;
+
+        .feed-item-read {
+            filter: brightness(0.75);
         }
-        
-        
+
+        a {
+            color: #839496;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="wrapper">
+    {{> navbar this }}
 
-    <div id="nav">
-        <a href="{{url_base}}/">Home</a>
-        <a href="{{url_base}}/add">Add</a>
-    </div>
-    
-    <div id="main">
-        {{{body}}}
-    </div>
+    <section class="section">
+        <div class="container">
+            {{{body}}}
+        </div>
+    </section>
 
-</div>
 
 </body>
+
 </html>
