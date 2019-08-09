@@ -1,18 +1,7 @@
-{{#each feeds}}
-<div class="box feed">
-    <div class="level">
-        <div class="level-left">
-            <span class="title is-4">{{this.name}}</span>
-        </div>
-        <div class="level-right">
-            <a class="button" href="{{../url_base}}/f/{{this.id}}">{{this.new}}</a>
-        </div>
-    </div>
-</div>
-{{/each}}
-
-<script>
-    $(".feed").click(function () {
-        window.location = $(this).find("a").attr("href");
-    });
-</script>
+<ul>
+  {{#each feeds}}
+    <li>
+        <a href="{{../url_base}}/f/{{this.id}}">{{this.name}} ({{this.new}})</a>
+    </li>
+  {{/each}}
+</ul>

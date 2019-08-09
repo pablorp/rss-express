@@ -18,7 +18,6 @@ app.engine(
     '.hbs',
     exphbs({
         defaultLayout: 'main',
-        partialsDir: __dirname + '/views/partials/',
         extname: '.hbs'
     })
 )
@@ -136,12 +135,19 @@ async function getFeeds() {
 
 async function getFeed(id) {
     id = Number(id)
-    let feed = await col.findOne({ id: id })
+    let feed = await col.findOne({
+        id: id
+    })
     return feed
 }
 
 async function guardarFeed(feed) {
-    await col.replaceOne({ id: feed.id }, feed)
+    await col.replaceOne(
+        {
+            id: feed.id
+        },
+        feed
+    )
 }
 
 async function crearFeed(feed) {
@@ -150,7 +156,9 @@ async function crearFeed(feed) {
 
 async function deleteFeed(id) {
     id = Number(id)
-    await col.deleteOne({ id: id })
+    await col.deleteOne({
+        id: id
+    })
 }
 
 async function actualizarFeeds() {
