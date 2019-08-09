@@ -30,3 +30,9 @@
         <a class="item-text" href="{{../url_base}}/txt/{{this.decodedLink}}">text</a>
     </div>
 </div>
+
+<script>
+    $(".feed-item").click(function () {
+        window.location = $(this).find(".item-title").attr("href");
+    });
+</script>
